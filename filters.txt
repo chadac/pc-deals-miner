@@ -1,0 +1,18 @@
+[cpu]      <305    # {ryzen7} {1800x}
+[cooler]   <95     # {h105}
+[mobo]     <105    # {x370}
+[ram]      <125    # {ddr4} or({16gb} {2x8gb})
+[ram]      <65     # {ddr4} {8gb}
+[hdd]      <55     # or({3tb} {4tb} {5tb})
+[ssd]      <205    # or({1tb})
+[gpu]      <605    # {evga} {gtx} {1080ti} {sc2}
+[gpu]      <605    # {1080ti}
+[case]     <65     # {atx full tower}
+[psu]      <65     # {850w} {950w}
+[monitor]  <355    # {S2716DG}
+[monitor]  <300    # {ips} or({2k} {1440p}) {144hz} or({27''} {27"})
+[monitor]  <265    # {27UD58-B}
+[monitor]  <250    # {ips} {4k} or({27''} {27"})
+[speakers] <35     # {z323}
+[speakers] <45     #
+[ups]      <105    # or({CP1500AVRLCD} {950w} {900w} {1000w})

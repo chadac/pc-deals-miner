@@ -34,7 +34,7 @@ def find(pattern, text):
 class Item:
     def __init__(self, submission):
         title = submission.title.strip()
-        self.comments_link = submission.permalink
+        self.comments_link = 'https://reddit.com' + submission.permalink
         self.link = submission.url
         self.title = title
         self.content = title.replace(' ', '').lower()
