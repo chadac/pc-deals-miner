@@ -4,9 +4,9 @@ Tool that mines and filters PC part deals from
 [/r/buildapcsales](https://reddit.com/r/buildapcsales). Built
 primarily as part of a tool that can quickly inform me of ongoing PC
 part deals. I don't want to be flooded with notifications, so this
-tool also enables filtering out deals for products of interest. An
-example is included in the [filters.txt](filters.txt) file and
-described in detail below.
+also allows filtering out deals for products of interest. Examples 
+are included in the [filters.txt](filters.txt) file and described
+in detail below.
 
 ## Setup
 
