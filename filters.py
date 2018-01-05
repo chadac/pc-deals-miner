@@ -178,17 +178,11 @@ def load_filters():
     with open("filters.txt", 'r') as f:
         lines = f.readlines()
         for line in lines:
-            m_group = re.search("\[(.+?)\]", line)
-            m_bound = re.search("<([0-9\.]+)", line)
-            m_logic = re.search("#(.*)$", line)
-            if not m_group:
-                continue
-            group = m_group.group(1)
-            bound = float(m_bound.group(1))
-            logic = m_logic.group(1)
+            (group_s, bound_s, logic_s) = tuple(line.split('##'))
+            group = re.match('\[(.+)\]$', group_s.strip()).group(1)
+            bound = float(re.match('<(\d+(?:\.\d+)?)', bound_s.strip()).group(1))
+            logic = logic_s.strip()
             f = Filter(group, bound, logic)
-            # print(group,"##",bound,"##",logic)
-            # print(f.logic)
             filters += [f]
     return filters
 

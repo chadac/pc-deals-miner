@@ -1,25 +1,25 @@
-[cpu]        <305    # {ryzen7} or({1800x} {1800})
-[cooler]     <95     # {h105}
-[cpu cooler] <95     # {liquid}
-[mobo]       <105    # {x370}
-[mobo]	     <105    # {atx} {am4}
-[ram]        <125    # {ddr4} [>=16gb] or({x8gb} {x16gb}) [>=3000]
-[ram]        <65     # {ddr4} [>=8gb] [>=3000]
-[hdd]        <55     # [>=3tb]
-[ssd]        <205    # [>=1tb]
-[gpu]        <655    # {evga} {gtx} {1080ti} {sc2}
-[gpu]        <605    # {1080ti}
-[case]       <65     # {atx full tower}
-[psu]        <65     # [>=850w]
-[monitor]    <365    # {S2716DG}
-[monitor]    <365    # or({2k} {1440p}) [>=144hz] [>=27in]
-[monitor]    <400    # {ips} or({4k} {2k} {1440p}) [>=144hz] [>=27in]
-[monitor]    <265    # {27UD58-B}
-[monitor]    <250    # {ips} {4k} [>=27in]
-[speakers]   <35     # {z323}
-[speakers]   <45     #
-[ups]        <105    # or({CP1500AVRLCD} [>=950w])
-[keyboard]   <30     #
-[keyboard]   <45     # {logitech}
-[mouse]	     <30     #
-[mouse]	     <42     # {corsair}
+[cpu]        ## <305  ## {ryzen7} or({1800x} {1800})
+[cooler]     ## <95   ## {h105}
+[cpu cooler] ## <95   ## {liquid}
+[mobo]       ## <105  ## {x370}
+[mobo]	     ## <105  ## {atx} {am4}
+[ram]        ## <125  ## {ddr4} [>=16gb] or({x8gb} {x16gb}) [>=3000]
+[ram]        ## <65   ## {ddr4} [>=8gb] [>=3000]
+[hdd]        ## <55   ## [>=3tb]
+[ssd]        ## <205  ## [>=1tb]
+[gpu]        ## <655  ## {evga} {gtx} {1080ti} {sc2}
+[gpu]        ## <605  ## {1080ti}
+[case]       ## <65   ## {atx full tower}
+[psu]        ## <65   ## [>=850w]
+[monitor]    ## <365  ## {S2716DG}
+[monitor]    ## <365  ## or({2k} {1440p}) [>=144hz] [>=27in]
+[monitor]    ## <400  ## {ips} or({4k} {2k} {1440p}) [>=144hz] [>=27in]
+[monitor]    ## <265  ## {27UD58-B}
+[monitor]    ## <250  ## {ips} {4k} [>=27in]
+[speakers]   ## <35   ## {z323}
+[speakers]   ## <45   ##
+[ups]        ## <105  ## or({CP1500AVRLCD} [>=950w])
+[keyboard]   ## <30   ##
+[keyboard]   ## <45   ## {logitech}
+[mouse]	     ## <30   ##
+[mouse]	     ## <42   ## {corsair}
