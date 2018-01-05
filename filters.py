@@ -2,12 +2,13 @@
 
 import re
 
-def tokenize_match(content):
+
+def _tokenize_until(content, until):
     match = ""
     i = 1
     while True:
-        if content[i] == "}":
-            return (content[i+1:], ['match', match])
+        if content[i] == until:
+            return (content[i+1:], match)
         match = match + content[i]
         i += 1
 
@@ -29,8 +30,11 @@ def tokenize(content):
             tokens += ['or']
             msg = msg[2:]
         elif msg[:1] == "{":
-            (msg, new_tokens) = tokenize_match(msg)
-            tokens += new_tokens
+            (msg, match_token) = _tokenize_until(msg, '}')
+            tokens += ['match', match_token]
+        elif msg[:1] == "[":
+            (msg, comp_token) = _tokenize_until(msg, ']')
+            tokens += ['comp', comp_token]
         else:
             raise Exception("Tokenization error: Unexpected token '{}'".format(msg[:1]))
         msg = msg.strip()
@@ -52,6 +56,8 @@ def _parse_block(tokens):
         return (tree, tokens)
     elif tokens[0] == "match":
         return _parse_match(tokens)
+    elif tokens[0] == "comp":
+        return _parse_comp(tokens)
     else:
         raise Exception("Parse error: Unexpected token '{}'".format(tokens[0]))
 
@@ -71,6 +77,21 @@ def _parse_match(tokens):
     if not tokens[0] == "match":
         raise Exception("Parse error: Expected 'match', received '{}'".format(tokens[0]))
     return (filter_match(tokens[1]), tokens[2:])
+
+
+import operator
+_ops = {'>': operator.gt, '<': operator.lt, '>=': operator.ge, '<=': operator.le, '==': operator.eq}
+def _parse_comp(tokens):
+    if not tokens[0] == "comp":
+        raise Exception("Parse error: Expected 'comp', received '{}'".format(tokens[0]))
+    m = re.match('(>|<|>=|<=|==)(\d+(\.\d+)?)([^0-9]*)', tokens[1])
+    if not m:
+        raise Exception("Parse error: Could not parse comp string '{}'".format(tokens[1]))
+    op = _ops[m.group(1)]
+    ## i do this just for the nice formatting
+    amt = int(m.group(2)) if m.group(3) else float(m.group(2))
+    unit = m.group(4)
+    return (filter_comp(op, amt, unit), tokens[2:])
 
 
 def parse(tokens):
@@ -119,14 +140,33 @@ class filter_match:
         return "matches('{}')".format(self.match_str)
 
 
+class filter_comp:
+    def __init__(self, op, amt, unit):
+        self.op = op
+        self.amt = int(amt)
+        self.unit = unit.lower().replace(' ', '')
+        ## replace for matching with monitors
+        if self.unit == 'in':
+            self.unit = '(?:in|\'\'|")'
+    
+    def eval(self, msg):
+        for num in re.findall('(\d+(?:\.\d+)?){}'.format(self.unit), msg):
+            num = float(num)
+            if self.op(num, self.amt):
+                return True
+        return False
+
+    def __repr__(self):
+        return "{}({}{})".format(self.op.__name__, self.amt, self.unit)
+
 class Filter:
     def __init__(self, group, bound, logic_str):
-        self.group = group
+        self.group = group.lower().replace(' ', '')
         self.bound = bound
         self.logic = parse(tokenize(logic_str))
 
     def matches(self, item):
-        return item.price and item.group.lower() == self.group.lower() \
+        return item.price and self.group in item.group \
             and item.price <= self.bound and self.logic.eval(item.content)
 
     def __repr__(self):

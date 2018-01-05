@@ -7,21 +7,24 @@ import smtplib
 from email.mime.text import MIMEText
 import secrets
 import filters
+import requests
+from bs4 import BeautifulSoup
 
 reddit = praw.Reddit(client_id=secrets.CLIENT_ID,
                      client_secret=secrets.CLIENT_SECRET,
                      user_agent='pcdeals-miner:1.0 (by /u/ChadtheWad)')
 subreddit = reddit.subreddit('buildapcsales')
-
-
-last_id = None
-if os.path.exists('.last-post'):
-    with open('.last-post', 'r') as f:
-        last_id = f.read()
+headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.108 Safari/537.36'}
 
 
 def is_valid_submission(submission):
     return not submission.selftext
+
+
+def webpage(url):
+    r = requests.get(url, headers=headers)
+    soup = BeautifulSoup(r.content, "html.parser")
+    return soup
 
 
 def find(pattern, text):
@@ -37,12 +40,25 @@ class Item:
         self.comments_link = 'https://reddit.com' + submission.permalink
         self.link = submission.url
         self.title = title
-        self.content = title.replace(' ', '').lower()
-        self.group = find("\[(.+)\]", title).lower()
+        self.content = title
+        self.group = find("\[(.+)\]", title).lower().replace(' ', '')
         try:
             self.price = float(find("\$(\d+(\.\d+)?)", title))
         except TypeError:
             self.price = None
+
+        try:
+            soup = webpage(self.link)
+            for tag in soup.find_all("meta"):
+                prop = tag.get("property", "description")
+                if not prop or "description" in prop or "keywords" in prop:
+                    self.content += " " + tag.get("content", "")
+        except Exception as e:
+            print("Exception occurred while loading web content:")
+            import traceback
+            traceback.print_exc()
+            print("URL:", self.link)
+        self.content = self.content.lower().replace(' ', '')
 
     @property
     def email_subject(self):
@@ -77,12 +93,17 @@ def send_email(item):
     smtp.quit()
 
 
-new_last_id = None
+
+old_ids = []
+if os.path.exists('.last-posts'):
+    with open('.last-posts', 'r') as f:
+        old_ids = f.read().split("::")
+
+new_ids = []
 for submission in subreddit.new(limit=20):
-    if not new_last_id:
-        new_last_id = submission.id
-    if str(submission.id) == last_id:
-        break
+    new_ids += [str(submission.id)]
+    if str(submission.id) in old_ids:
+        continue
     if is_valid_submission(submission):
         item = Item(submission)
         if filters.matches(item):
@@ -90,5 +111,5 @@ for submission in subreddit.new(limit=20):
             send_email(item)
 
 
-with open('.last-post', 'w') as f:
-    f.write(new_last_id)
+with open('.last-posts', 'w') as f:
+    f.write('::'.join(new_ids))
