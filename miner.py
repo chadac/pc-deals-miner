@@ -93,23 +93,25 @@ def send_email(item):
     smtp.quit()
 
 
-
 old_ids = []
 if os.path.exists('.last-posts'):
     with open('.last-posts', 'r') as f:
         old_ids = f.read().split("::")
 
+submissions = []
 new_ids = []
-for submission in subreddit.new(limit=20):
+for submission in subreddit.new(limit=40):
     new_ids += [str(submission.id)]
-    if str(submission.id) in old_ids:
+    if str(submission.id) in old_ids or len(new_ids) > 20:
         continue
+    submissions += [submission]
+
+with open('.last-posts', 'w') as f:
+    f.write('::'.join(new_ids))
+
+for submission in submissions:
     if is_valid_submission(submission):
         item = Item(submission)
         if filters.matches(item):
             print("Match for", item)
             send_email(item)
-
-
-with open('.last-posts', 'w') as f:
-    f.write('::'.join(new_ids))
